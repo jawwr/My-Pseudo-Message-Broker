@@ -5,7 +5,7 @@ import com.jawwr.core.annotations.EnableBroker;
 import com.jawwr.testEntity.Person;
 
 @EnableBroker
-public class Consumer {
+public class Consumer1 {
     @BrokerSubscriber(queue = "queue1")
     private void receiver1(Person person){
         System.out.println();
