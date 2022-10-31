@@ -14,16 +14,16 @@ public abstract class QueuePool {
     }
     public static void sendMessage(String key, byte[] message){
         var queue = queues.get(key);
-        Byte[] byteMessage = new Byte[message.length];
-        for (int i = 0; i < message.length; i++) {
-            byteMessage[i] = message[i];
+        if (queue == null) {
+            queues.put(key, new ArrayDeque<>());
+            queue = queues.get(key);
         }
         queue.add(message);
     }
     public static boolean isMessageExist(String key){
         return queues.get(key).size() != 0;
     }
-    public static byte[] getMessage(String key){
+    public synchronized static byte[] getMessage(String key){
         return queues.get(key).poll();
     }
 }

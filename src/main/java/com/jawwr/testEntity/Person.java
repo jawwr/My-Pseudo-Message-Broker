@@ -2,7 +2,7 @@ package com.jawwr.testEntity;
 
 import java.io.Serializable;
 
-public class Person implements Serializable {
+public class Person {
     private int age;
     private String name;
     private String lastName;
