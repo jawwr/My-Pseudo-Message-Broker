@@ -7,11 +7,11 @@ import com.jawwr.testEntity.Person;
 @EnableBroker
 public class Consumer1 {
     @BrokerSubscriber(queue = "queue1")
-    private void receiver1(Person person){
-        System.out.println();
+    public void receiver1(String s){
+        System.out.println(s);
     }
     @BrokerSubscriber(queue = "queue2")
-    private void receiver2(Person person){
-        System.out.println();
+    public void receiver2(Person person){
+        System.out.println(person.getAge());
     }
 }

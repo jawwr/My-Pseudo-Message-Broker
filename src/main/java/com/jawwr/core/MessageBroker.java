@@ -5,7 +5,9 @@ import com.jawwr.core.annotations.EnableBroker;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -14,19 +16,17 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class MessageBroker {
-    private static List<Class<?>> consumers;
-    private static List<Method> subscriber;
     public static final Logger LOGGER = Logger.getLogger("Broker");
 
     public static void run() {
-        consumers = findConsumers();
+        var consumers = findConsumers();
         LOGGER.log(Level.ALL, "[%s] Find all broker subscribers, total: %d");
-        subscriber = findSubscribers();
-        createQueue();
-        startTimer();
+        var subscriber = findSubscribers(consumers);
+        createQueue(subscriber);
+        startTimer(subscriber);
     }
 
-    private static void createQueue() {
+    private static void createQueue(List<Method> subscriber) {
         for (Method method : subscriber) {
             BrokerSubscriber ann = (BrokerSubscriber) Arrays.stream(method.getDeclaredAnnotations())
                     .filter(x -> x.annotationType() == BrokerSubscriber.class)
@@ -37,7 +37,7 @@ public class MessageBroker {
         }
     }
 
-    private static List<Method> findSubscribers() {
+    private static List<Method> findSubscribers(List<Class<?>> consumers) {
         List<Method> subscribers = new ArrayList<>();
         for (Class<?> consumer : consumers) {
             Method[] methods = consumer.getDeclaredMethods();
@@ -59,10 +59,6 @@ public class MessageBroker {
                 .collect(Collectors.toList());
     }
 
-    public static List<Class<?>> getListConsumers() {
-        return consumers;
-    }
-
     public static void sendMessage(String key, Object message) {
         byte[] buffer;
         try (
@@ -77,23 +73,31 @@ public class MessageBroker {
         }
     }
 
-    private static void startTimer() {
-        for (Method method : subscriber) {
-            String queueName = ((BrokerSubscriber) Arrays.stream(method.getDeclaredAnnotations())
-                    .filter(x -> x.annotationType() == BrokerSubscriber.class)
-                    .findFirst()
-                    .get()).queue();
-            TimerTask timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    if (QueuePool.isMessageExist(queueName)){
-                        System.out.println("queue " + queueName + " has message!");
+    private static void startTimer(List<Method> subscriber) {
+            for (Method method : subscriber) {
+                String queueName = ((BrokerSubscriber) Arrays.stream(method.getDeclaredAnnotations())
+                        .filter(x -> x.annotationType() == BrokerSubscriber.class)
+                        .findFirst()
+                        .get()).queue();
+                TimerTask timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (QueuePool.isMessageExist(queueName)) {
+                            Class<?> parameterType = method.getParameterTypes()[0];
+                            Class<?> clazz = method.getDeclaringClass();
+                            byte[] message = QueuePool.getMessage(queueName);
+                            try {
+                                var obj = new ObjectInputStream(new ByteArrayInputStream(message)).readObject();
+                                method.invoke(clazz.newInstance(), obj);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                }
-            };
-            Timer timer = new Timer(queueName);
-            timer.scheduleAtFixedRate(timerTask, 30, 500);
-        }
-        System.out.println();
+                };
+                Timer timer = new Timer(queueName);
+                timer.scheduleAtFixedRate(timerTask, 30, 500);
+            }
+            System.out.println();
     }
 }
