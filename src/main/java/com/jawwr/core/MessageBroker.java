@@ -122,6 +122,26 @@ public class MessageBroker {
         return new String(message);
     }
 
+    public static String receive(String key, long times){
+        String message = null;
+        try {
+            for (int i = 0; i < times; ++i){
+                message = receive(key);
+                if (message != null){
+                    break;
+                }
+                Thread.sleep(1);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return message;
+    }
+
+    public static String receive(String key, int seconds){
+        return receive(key, seconds * 1000L);
+    }
+
     private static BrokerSubscriber getMethod(Method method) {
         return ((BrokerSubscriber) Arrays.stream(method.getDeclaredAnnotations())
                 .filter(x -> x.annotationType() == BrokerSubscriber.class)

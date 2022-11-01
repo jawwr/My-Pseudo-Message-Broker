@@ -19,9 +19,9 @@ public class Application {
 
         MessageBroker.sendMessage("queue2", person);
 
-        Thread.sleep(10_000);
+        Thread.sleep(1_000);
 
-        String message = MessageBroker.receive("queue2");
+        String message = MessageBroker.receive("queue2", 5L);
         System.out.println(message);
 
 //        System.out.println();
