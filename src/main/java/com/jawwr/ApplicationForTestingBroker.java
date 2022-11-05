@@ -9,37 +9,27 @@ public class ApplicationForTestingBroker {
 
         Person person = new Person();
         person.setAge(19);
-        person.setName("Namee");
+        person.setName("Name");
         person.setLastName("Last name");
-//        for (int i = 0; i < 10; i++){
-//            person.setId(i);
-//            MessageBroker.sendMessage("queue2", person);
-//        }
-//        person.setLastName("Where");
-//
-//        MessageBroker.sendMessage("queue2", person);
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(6_000);
+                Thread.sleep(10_000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            for (int i = 0; i < 10; i++){
+            for (int i = 0; i < 50; i++) {
                 person.setId(i);
-                MessageBroker.sendMessage("queue2", person);
+                MessageBroker.sendMessage("queue2", person.toString());
             }
         });
         thread.start();
-//        Thread.sleep(15_000);
 
         long startTime = System.currentTimeMillis();
 
-        String message = MessageBroker.receive("queue2", 15_000L);
+        String message = MessageBroker.receive("queue2", 5_000L);
 
         long endTime = System.currentTimeMillis();
         System.out.println(endTime - startTime);
         System.out.println("from main: " + message);
-
-//        System.out.println();
     }
 }

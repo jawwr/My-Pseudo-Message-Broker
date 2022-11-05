@@ -1,6 +1,9 @@
 package com.jawwr.core;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 
 public abstract class QueuePool {
     private static final Map<String, Queue<byte[]>> queues = new HashMap<>();
@@ -12,7 +15,8 @@ public abstract class QueuePool {
     public static Map<String, Queue<byte[]>> getQueues() {
         return queues;
     }
-    public static void sendMessage(String key, byte[] message){
+
+    public static void sendMessage(String key, byte[] message) {
         var queue = queues.get(key);
         if (queue == null) {
             queues.put(key, new ArrayDeque<>());
@@ -20,10 +24,12 @@ public abstract class QueuePool {
         }
         queue.add(message);
     }
-    public static boolean isMessageExist(String key){
+
+    public static boolean isMessageExist(String key) {
         return queues.get(key).size() != 0;
     }
-    public synchronized static byte[] getMessage(String key){
+
+    public synchronized static byte[] getMessage(String key) {
         return queues.get(key).poll();
     }
 }
