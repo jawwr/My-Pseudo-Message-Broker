@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BrokerSubscriber {
     String queue();
+    long time() default 0L;
 }

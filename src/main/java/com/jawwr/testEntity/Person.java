@@ -3,6 +3,26 @@ package com.jawwr.testEntity;
 import java.io.Serializable;
 
 public class Person {
+    private int id;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":" + id + "," +
+                "\"age\":" + age + "," +
+                "\"name\":" + "\"" + name + "\"," +
+                "\"lastName\":" + "\""  + lastName + "\"" +
+                '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private int age;
     private String name;
     private String lastName;
