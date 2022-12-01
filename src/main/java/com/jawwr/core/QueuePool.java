@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Queue;
 
 public abstract class QueuePool {
+    private QueuePool() {
+    }
+
     private static final Map<String, Queue<byte[]>> queues = new HashMap<>();
 
     public static void addNewQueue(String name) {

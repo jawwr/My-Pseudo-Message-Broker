@@ -7,13 +7,17 @@ public class ApplicationForTestingBroker {
     public static void main(String[] args) throws InterruptedException {
         MessageBroker.run();
 
-        Person person = new Person();
-        person.setAge(19);
-        person.setName("Name");
-        person.setLastName("Last name");
+        Person person = new Person.Builder()
+                .setAge(19)
+                .setName("Name")
+                .setSurname("Last name")
+                .build();
+//        person.setAge(19);
+//        person.setName("Name");
+//        person.setLastName("Last name");
         Thread thread = new Thread(() -> {
             try {
-                Thread.sleep(10_000);
+                Thread.sleep(2_000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

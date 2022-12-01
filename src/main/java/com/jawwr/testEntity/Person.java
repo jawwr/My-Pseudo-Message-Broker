@@ -1,7 +1,5 @@
 package com.jawwr.testEntity;
 
-import java.io.Serializable;
-
 public class Person {
     private int id;
 
@@ -11,7 +9,7 @@ public class Person {
                 "\"id\":" + id + "," +
                 "\"age\":" + age + "," +
                 "\"name\":" + "\"" + name + "\"," +
-                "\"lastName\":" + "\""  + lastName + "\"" +
+                "\"lastName\":" + "\"" + lastName + "\"" +
                 '}';
     }
 
@@ -51,12 +49,39 @@ public class Person {
         this.lastName = lastName;
     }
 
-    public Person() {
+    private Person() {
     }
 
     public Person(int age, String name, String lastName) {
         this.age = age;
         this.name = name;
         this.lastName = lastName;
+    }
+
+    public static class Builder{
+        private int personAge;
+        private String personName;
+        private String personSurname;
+        public Builder setAge(int age){
+            this.personAge = age;
+            return this;
+        }
+        public Builder setName(String name){
+            this.personName = name;
+            return this;
+        }
+        public Builder setSurname(String surname){
+            this.personSurname = surname;
+            return this;
+        }
+
+        public Person build(){
+            Person person = new Person();
+            person.age = this.personAge;
+            person.name = this.personName;
+            person.lastName = this.personSurname;
+
+            return person;
+        }
     }
 }

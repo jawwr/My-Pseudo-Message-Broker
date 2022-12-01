@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class QueueUtils {
+    private QueueUtils() {
+    }
+
     public static List<Method> findSubscribers(List<Class<?>> consumers) {
         List<Method> subscribers = new ArrayList<>();
         for (Class<?> consumer : consumers) {
